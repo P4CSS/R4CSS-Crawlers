@@ -1,0 +1,156 @@
+---
+title: "R03_2_InClass_scraping_dcard"
+author: "Jilung Hsieh"
+date: "2019/9/2"
+output:
+  html_document:
+    highlight: zenburn
+    number_sections: yes
+    theme: cerulean
+    toc: yes
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Loading library
+```{r}
+library(tidyverse)
+library(httr)
+library(jsonlite)
+options(stringsAsFactors = F)
+```
+
+
+
+# Inspecting one dcard url using Chrome DevelopTools
+- Inspecting the page by right-click mouse
+- Reloading the page and try to find the JSON file storing post data
+- Clicking tab "latest" to see what happened
+
+```{r}
+url_dcard <- "https://www.dcard.tw/f/relationship"
+browseURL(url_dcard)
+```
+
+
+
+# Finding out url rules
+
+## Finding out the url rule by 3 pages data
+- Getting back 3 pages data
+- However, No url rule was found by observing urls directedly.
+
+```{r}
+url1 <- "https://www.dcard.tw/_api/forums/relationship/posts?popular=false&limit=30"
+url2 <- "https://www.dcard.tw/_api/forums/relationship/posts?popular=false&limit=30&before=232231641"
+url3 <- "https://www.dcard.tw/_api/forums/relationship/posts?popular=false&limit=30&before=232230790"
+```
+
+
+## Getting them back and previewing them
+Previewing data to find out url rules inside data. **IT MUST** have some rules to know the next url.
+
+```{r}
+res1 <- GET(url1) %>% content("text") %>% fromJSON()
+res2 <- GET(url2) %>% content("text") %>% fromJSON()
+res3 <- GET(url3) %>% content("text") %>% fromJSON()
+```
+
+## ANS: Printing out the 30th post id of each page data 
+The 30th post id is part of the url of next chunk data
+```{r}
+res1$id[30]
+url2
+res2$id[30]
+url3
+res3$id[30]
+```
+
+# Step-by-Step code
+
+## Getting the first page
+```{r}
+url <- "https://www.dcard.tw/_api/forums/relationship/posts?popular=false&limit=30"
+res <- GET(url) %>% content("text") %>% fromJSON()  %>%
+        select(-tags, -topics, -mediaMeta, -reactions, -media, -meta, -customStyle)
+```
+
+## get the next chunk of data
+```{r}
+next_url <- paste0("https://www.dcard.tw/_api/forums/relationship/posts?popular=false&limit=30&before=", res$id[30])
+res <- GET(next_url) %>% content("text") %>% fromJSON() %>%
+        select(-tags, -topics, -mediaMeta, -reactions, -media, -meta, -customStyle)
+```
+
+
+## Using for-loop to getting more data
+
+```{r}
+for(i in 1:5){
+    next_url <- paste0("https://www.dcard.tw/_api/forums/relationship/posts?popular=false&limit=30&before=", res$id[30])
+    res <- GET(next_url) %>% content("text") %>% fromJSON() %>%
+        select(-tags, -topics, -mediaMeta, -reactions, -media, -meta, -customStyle)
+    print(next_url)
+}
+```
+
+
+## Assigning the 1st data.frame res to post.df to collect all data
+```{r}
+url <- "https://www.dcard.tw/_api/forums/relationship/posts?popular=false&limit=30"
+res <- GET(url) %>% content("text") %>% fromJSON()  %>%
+        select(-tags, -topics, -mediaMeta, -reactions, -media, -meta, -customStyle)
+post.df <- res
+```
+
+
+## Using for-loop to get more data and bind to the end of post.df
+```{r}
+for(i in 1:5){
+    next_url <- paste0("https://www.dcard.tw/_api/forums/relationship/posts?popular=false&limit=30&before=", res$id[30])
+    res <- GET(next_url) %>% content("text") %>% fromJSON() %>%
+        select(-tags, -topics, -mediaMeta, -reactions, -media, -meta, -customStyle)
+    glimpse(res)
+    post.df <- bind_rows(post.df %>% select(id, title), res %>% select(id, title))
+    print(next_url)
+    print(nrow(post.df))
+}
+
+```
+
+# Full code
+- Assigning a big enough i to for-loop
+- Let error occurs to know which url is the ending url3
+```{r}
+url <- "https://www.dcard.tw/_api/forums/relationship/posts?popular=false&limit=30"
+
+res <- GET(url) %>% content("text") %>% fromJSON()  %>%
+        select(-tags, -topics, -mediaMeta, -reactions, -media, -meta, -customStyle)
+
+post.df <- res
+
+for(i in 1:500){
+    next_url <- paste0(url, "&before=", res$id[30])
+    res <- GET(next_url) %>% content("text") %>% fromJSON() %>%
+        select(-tags, -topics, -mediaMeta, -reactions, -media, -meta, -customStyle)
+    post.df <- bind_rows(post.df, res)
+    message("[", i, "] ", nrow(post.df))
+}
+
+# Error: lexical error: invalid char in json text.
+#                                        <!DOCTYPE html> <!--[if lt IE 7
+#                      (right here) ------^
+
+```
+
+## print out the ending url
+```{r}
+print(next_url)
+res %>% glimpse()
+```
+
