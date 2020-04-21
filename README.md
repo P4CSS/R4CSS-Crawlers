@@ -11,6 +11,9 @@
 * slide: [HTML parser](https://drive.google.com/open?id=19bvFt5UjfqzpxzvbVMZ4fxCphbKsbZMvSDzS2Wewkh4)
 
 
+## Open data links
+* Youbike: https://tcgbusfs.blob.core.windows.net/blobyoubike/YouBikeTP.gz
+
 ## Inspecting data links in the following service
 
 1. 空品資料中央監測資料https://airtw.epa.gov.tw/CHT/EnvMonitoring/Central/CentralMonitoring.aspx
@@ -19,6 +22,7 @@
 4. PTT boy-girl https://www.ptt.cc/bbs/Boy-Girl/index.html
 5. ibon address https://www.ibon.com.tw/mobile/retail_inquiry.aspx#gsc.tab=0
 6. ltn news search https://news.ltn.com.tw/search?keyword=%E8%82%BA%E7%82%8E
+7. cnyes.com
  
 # Videos
 ## Prior knowledge
