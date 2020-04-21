@@ -1,6 +1,7 @@
 # R4CSS-Crawlers
  
 # Tutorials
+* Docs: [R4DS-Ch2-5.pdf](R4DS-Ch2-5.pdf)
 
 ## Prior knowledge
 
