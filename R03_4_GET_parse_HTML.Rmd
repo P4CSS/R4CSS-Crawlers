@@ -55,14 +55,50 @@ counties
 ```
 
 
+```{r}
+urlp1 <- "https://www.ptt.cc/bbs/Boy-Girl/index.html"
+urlp2 <- "https://www.ptt.cc/bbs/Boy-Girl/index4814.html"
+urlp3 <- "https://www.ptt.cc/bbs/Boy-Girl/index4813.html"
+urlp4 <- "https://www.ptt.cc/bbs/Boy-Girl/index4812.html"
+
+
+all.df <- data.frame()
+for(page in 4783:4813){
+  url <- paste0("https://www.ptt.cc/bbs/Boy-Girl/index", page, ".html")
+  print(url)
+  doc <- read_html(url)
+  nodes <- html_nodes(doc, "div.r-ent > div.title > a")
+  titles <- html_text(nodes)
+  links <- html_attr(nodes, "href")
+  df <- data.frame(titles, links, page, url) %>%
+    mutate(links = str_c(pre, links))
+  all.df <- bind_rows(all.df, df)
+}
+
+url <- "https://www.ptt.cc/bbs/Boy-Girl/index4812.html"
+library(rvest) # library(xml2)
+
+
+
+```
+
+
+
+
 
 # Getting PTT
 ```{r}
+library(rvest)
 # Assigning url
-url <- "https://www.ptt.cc/bbs/Boy-Girl/index4589.html"
+url <- "https://www.ptt.cc/bbs/Boy-Girl/index4812.html"
+
 # Using read_html() to get back and convert to xml_document
 doc <- read_html(url)
 class(doc)
+browseURL(url)
+
+nodes <- html_nodes(doc, "div.r-ent > div.title > a")
+
 
 # Using html_node() or html_nodes() to get the nodes you want
 nodes <- html_nodes(doc, ".r-ent > .title > a")
@@ -77,6 +113,9 @@ links <- html_attr(nodes, "href")
 
 # setting prefix of url
 pre <- "https://www.ptt.cc"
+
+library(tidyverse)
+library(dplyr)
 
 # Combines titles and links to a data.frame and adding prefix url to links
 df <- data.frame(titles, links) %>%
