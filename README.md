@@ -5,6 +5,9 @@
 ## Prior knowledge
 
 * slide: [What is json?](https://drive.google.com/open?id=15k3cEw3ogBP5Cg5k5RZb0s4kVqoTDKuYJ67OUO043P4)
+* slide: [Crawler designs](https://docs.google.com/presentation/d/1DCveWYpwlR4xfbySKVoikgdme5W71Pp57vyxSojr7XE/edit?usp=sharing)
+* slide: [XPath and CSS selector](https://docs.google.com/presentation/d/1xS7jfahx8t7WuYmSbe4qfUjs0L7u3CgaqLADmcerGso/edit?usp=sharing)
+* slide: [HTML parser](https://drive.google.com/open?id=19bvFt5UjfqzpxzvbVMZ4fxCphbKsbZMvSDzS2Wewkh4)
 
 
 ## Inspecting data links in the following service
